@@ -22,6 +22,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".ObjectsActivity">
+<!--            Objects Activity-->
+        </activity>
+
+        <activity android:name=".WorkersActivity">
+            <!--            Objects Activity-->
+        </activity>
     </application>
 
 </manifest>
