@@ -30,6 +30,7 @@
         <activity android:name=".WorkersActivity">
             <!--            Objects Activity-->
         </activity>
+        
     </application>
 
 </manifest>

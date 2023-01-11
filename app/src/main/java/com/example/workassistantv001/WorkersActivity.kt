@@ -36,23 +36,24 @@ class WorkersActivity : AppCompatActivity() {
 
         binding.btnAddWorker.setOnClickListener {
 
-            val firstName = binding.etWorkerName.text.toString()
-            val lastName = binding.etWorkerLastname.text.toString()
-            val username = firstName + lastName
+            if(binding.etWorkerLastname.text.isNotEmpty() && binding.etWorkerName.text.isNotEmpty() ){
+                val firstName = binding.etWorkerName.text.toString()
+                val lastName = binding.etWorkerLastname.text.toString()
+                val username = firstName + lastName
 
-            database = FirebaseDatabase.getInstance().getReference("Workers")
-            val worker = Worker(username, firstName, lastName)
+                database = FirebaseDatabase.getInstance().getReference("Workers")
+                val worker = Worker(username, firstName, lastName)
 
-            database.child(username).setValue(worker).addOnSuccessListener {
-                binding.etWorkerName.text.clear()
-                binding.etWorkerLastname.text.clear()
+                database.child(username).setValue(worker).addOnSuccessListener {
+                    binding.etWorkerName.text.clear()
+                    binding.etWorkerLastname.text.clear()
 
-                Toast.makeText(this,"Successfully Saved", Toast.LENGTH_SHORT).show()
-            }.addOnFailureListener{
-                Toast.makeText(this,"Failed", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,"Successfully Saved", Toast.LENGTH_SHORT).show()
+                }.addOnFailureListener{
+                    Toast.makeText(this,"Failed", Toast.LENGTH_SHORT).show()
+                }
+                refresh()
             }
-
-            refresh()
         }
 
         binding.btnDeleteSelectedWorkers.setOnClickListener {

@@ -28,20 +28,25 @@ class ObjectsActivity : AppCompatActivity() {
         readData()
 
         binding.btnAddObject.setOnClickListener {
-            val objectName = binding.etObjectName.text.toString()
 
-            database = FirebaseDatabase.getInstance().getReference("Objects")
-            val objekt = Object(objectName)
+            if(binding.etObjectName.text.isNotEmpty()){
+                val objectName = binding.etObjectName.text.toString()
+                database = FirebaseDatabase.getInstance().getReference("Objects")
+                val objekt = Object(objectName)
 
-            database.child(objectName).setValue(objekt).addOnSuccessListener {
-                binding.etObjectName.text.clear()
+                database.child(objectName).setValue(objekt).addOnSuccessListener {
+                    binding.etObjectName.text.clear()
 
-                Toast.makeText(this,"Successfully Saved", Toast.LENGTH_SHORT).show()
-            }.addOnFailureListener{
-                Toast.makeText(this,"Failed", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,"Successfully Added", Toast.LENGTH_SHORT).show()
+                }.addOnFailureListener{
+                    Toast.makeText(this,"Failed", Toast.LENGTH_SHORT).show()
+                }
+
+                refresh()
             }
-
-            refresh()
+            else{
+                Toast.makeText(this,"Object name is empty", Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.btnDeleteSelectedObjects.setOnClickListener {
@@ -89,14 +94,13 @@ class ObjectsActivity : AppCompatActivity() {
         }.addOnFailureListener {
 
             Toast.makeText(this,"Failed", Toast.LENGTH_SHORT).show()
-
         }
     }
 
     private fun refresh(){
-        finish();
-        overridePendingTransition(0, 0);
-        startActivity(getIntent());
-        overridePendingTransition(0, 0);
+        finish()
+        overridePendingTransition(0, 0)
+        startActivity(getIntent())
+        overridePendingTransition(0, 0)
     }
 }
