@@ -12,9 +12,13 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.workassistantv001.databinding.ActivityMainBinding
-import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.rvWorkers
+import kotlinx.android.synthetic.main.activity_objects.*
+import kotlinx.android.synthetic.main.activity_workers.*
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -22,8 +26,14 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var mainAdapter: MainAdapter
     private lateinit var txt_selected_date : TextView
+    private lateinit var database1 : DatabaseReference
+    private lateinit var database2 : DatabaseReference
 
+
+    private lateinit var objectArrayList: ArrayList<Object>
+    private lateinit var workerArrayList: ArrayList<Worker>
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,11 +74,77 @@ class MainActivity : AppCompatActivity() {
                 myCalendar.get(Calendar.DAY_OF_MONTH)).show()
         }
 
+        mainAdapter = MainAdapter(mutableListOf(), mutableListOf())
+
+        rvWorkers.adapter = mainAdapter
+        rvWorkers.layoutManager = LinearLayoutManager(this)
+
+        readData()
+
     }
+
+    private fun readData(){
+        database1 = FirebaseDatabase.getInstance().getReference("Workers")
+        //database2 = FirebaseDatabase.getInstance().getReference("Workers")
+
+        objectArrayList = arrayListOf<Object>()
+        workerArrayList = arrayListOf<Worker>()
+        getObjectData()
+//        getWorkerData()
+
+    }
+
+    private fun getObjectData() {
+        database1.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    for (objectSnapshot in snapshot.children) {
+                        val newObject = objectSnapshot.getValue(Object::class.java)
+                        objectArrayList.add(newObject!!)
+                    }
+
+                    for (workerSnapshot in snapshot.children) {
+                        val worker = workerSnapshot.getValue(Worker::class.java)
+                        workerArrayList.add(worker!!)
+                    }
+                    rvWorkers.adapter = MainAdapter(objectArrayList, workerArrayList)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(baseContext,"Failed to load", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+//    private fun getWorkerData() {
+//
+//        database2.addValueEventListener(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                if (snapshot.exists()) {
+//                    for (workerSnapshot in snapshot.children) {
+//                        val worker = workerSnapshot.getValue(Worker::class.java)
+//                        workerArrayList.add(worker!!)
+//                    }
+//                    rvWorkers.adapter = MainAdapter(objectArrayList, workerArrayList)
+//                }
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//            }
+//        })
+//    }
 
     private fun updateLable(myCalendar: Calendar) {
         val myFormat = "yyyy-MM-dd"
         val sdf = SimpleDateFormat(myFormat, Locale.GERMANY)
         txt_selected_date.setText(sdf.format(myCalendar.time))
+    }
+
+    private fun refresh(){
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(getIntent());
+        overridePendingTransition(0, 0);
     }
 }

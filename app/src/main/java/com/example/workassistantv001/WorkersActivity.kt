@@ -74,8 +74,6 @@ class WorkersActivity : AppCompatActivity() {
 
     private fun getWorkerData() {
 
-        database = FirebaseDatabase.getInstance().getReference("Workers")
-
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {

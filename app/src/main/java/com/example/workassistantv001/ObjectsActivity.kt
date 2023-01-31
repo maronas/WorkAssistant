@@ -66,9 +66,6 @@ class ObjectsActivity : AppCompatActivity() {
     }
 
     private fun getObjectData() {
-
-        database = FirebaseDatabase.getInstance().getReference("Objects")
-
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
