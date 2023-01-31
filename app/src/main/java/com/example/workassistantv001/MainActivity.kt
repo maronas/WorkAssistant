@@ -91,7 +91,6 @@ class MainActivity : AppCompatActivity() {
         workerArrayList = arrayListOf<Worker>()
         getObjectData()
 //        getWorkerData()
-
     }
 
     private fun getObjectData() {
@@ -142,9 +141,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refresh(){
-        finish();
-        overridePendingTransition(0, 0);
-        startActivity(getIntent());
-        overridePendingTransition(0, 0);
+        mainAdapter.notifyDataSetChanged()
+        workerArrayList.clear()
+        objectArrayList.clear()
     }
 }

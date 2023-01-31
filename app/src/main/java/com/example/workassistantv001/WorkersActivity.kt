@@ -49,9 +49,11 @@ class WorkersActivity : AppCompatActivity() {
                     binding.etWorkerLastname.text.clear()
 
                     Toast.makeText(this,"Successfully Saved", Toast.LENGTH_SHORT).show()
+
                 }.addOnFailureListener{
                     Toast.makeText(this,"Failed", Toast.LENGTH_SHORT).show()
                 }
+
                 refresh()
             }
         }
@@ -66,6 +68,7 @@ class WorkersActivity : AppCompatActivity() {
     }
 
     private fun readData(){
+
         database = FirebaseDatabase.getInstance().getReference("Workers")
 
         workerArrayList = arrayListOf<Worker>()
@@ -104,10 +107,8 @@ class WorkersActivity : AppCompatActivity() {
     }
 
     private fun refresh(){
-        finish();
-        overridePendingTransition(0, 0);
-        startActivity(getIntent());
-        overridePendingTransition(0, 0);
+        workerAdapter.notifyDataSetChanged()
+        workerArrayList.clear()
     }
 
 }
