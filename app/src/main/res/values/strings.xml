@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Work Assistant V0.01</string>
+    <string name="selected_item">Selected item:</string>
+
+
+    <string-array name="Objektai">
+        <item>Object 1</item>
+        <item>Object 2</item>
+        <item>Object 3</item>
+        <item>Object 4</item>
+    </string-array>
 </resources>

@@ -28,7 +28,7 @@
         </activity>
 
         <activity android:name=".WorkersActivity">
-            <!--            Objects Activity-->
+            <!--            Workers Activity-->
         </activity>
         
     </application>
