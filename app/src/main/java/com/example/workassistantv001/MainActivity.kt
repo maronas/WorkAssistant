@@ -29,8 +29,8 @@ import java.util.*
 class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var mainAdapter: MainAdapter
     private lateinit var txt_selected_date : TextView
-    private lateinit var database1 : DatabaseReference
-    private lateinit var database2 : DatabaseReference
+    private lateinit var workersRefs : DatabaseReference
+    private lateinit var objectsRefs : DatabaseReference
 
 
     private lateinit var objectArrayList: ArrayList<Object>
@@ -43,19 +43,6 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
         setContentView(R.layout.activity_main)
 
-        // -------------------- Creating fucking spinner
-//        val spinner: Spinner = findViewById(R.id.spObjects)
-//        var languages = arrayOf("Java", "PHP", "Kotlin", "Javascript", "Python", "Swift")
-//
-//        ArrayAdapter(
-//            baseContext,
-//            android.R.layout.simple_spinner_item,
-//            languages
-//        ).also { adapter ->
-//            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-//            spinner.adapter = adapter
-//        }
-        // -------------------- End of fucking spinner
         val btn_manage_objects = findViewById(R.id.btnManageObjects) as Button
         val btn_manage_workers = findViewById(R.id.btnManageWorkers) as Button
         val btn_select_date = findViewById(R.id.btnSelectDate) as Button
@@ -82,9 +69,6 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         }
 
         btn_select_date.setOnClickListener {
-//            val intent = Intent(this, CalendarActivity::class.java)
-//            startActivity(intent)
-
             DatePickerDialog(this, datePicker,myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                 myCalendar.get(Calendar.DAY_OF_MONTH)).show()
         }
@@ -97,23 +81,19 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
 
     private fun readData(){
-        database1 = FirebaseDatabase.getInstance().getReference("Workers")
-        //database2 = FirebaseDatabase.getInstance().getReference("Workers")
+        workersRefs = FirebaseDatabase.getInstance().getReference("Workers")
+        objectsRefs = FirebaseDatabase.getInstance().getReference("Objects")
 
         objectArrayList = arrayListOf<Object>()
         workerArrayList = arrayListOf<Worker>()
         getObjectData()
-//        getWorkerData()
     }
 
     private fun getObjectData() {
-        database1.addValueEventListener(object : ValueEventListener {
+        workersRefs.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    for (objectSnapshot in snapshot.children) {
-                        val newObject = objectSnapshot.getValue(Object::class.java)
-                        objectArrayList.add(newObject!!)
-                    }
+
 
                     for (workerSnapshot in snapshot.children) {
                         val worker = workerSnapshot.getValue(Worker::class.java)
@@ -128,25 +108,24 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 Toast.makeText(baseContext,"Failed to load", Toast.LENGTH_SHORT).show()
             }
         })
-    }
 
-//    private fun getWorkerData() {
-//
-//        database2.addValueEventListener(object : ValueEventListener {
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                if (snapshot.exists()) {
-//                    for (workerSnapshot in snapshot.children) {
-//                        val worker = workerSnapshot.getValue(Worker::class.java)
-//                        workerArrayList.add(worker!!)
-//                    }
-//                    rvWorkers.adapter = MainAdapter(objectArrayList, workerArrayList)
-//                }
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//            }
-//        })
-//    }
+        objectsRefs.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.exists()){
+                    for (objectSnapshot in snapshot.children) {
+                        val newObject = objectSnapshot.getValue(Object::class.java)
+                        objectArrayList.add(newObject!!)
+                    }
+
+                    rvWorkers.adapter = MainAdapter(objectArrayList, workerArrayList)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(baseContext,"Failed to load", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
 
     private fun updateLable(myCalendar: Calendar) {
         val myFormat = "yyyy-MM-dd"

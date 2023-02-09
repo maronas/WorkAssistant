@@ -17,7 +17,7 @@ class MainAdapter(
     private val objects: MutableList<Object>,
     private val workers: MutableList<Worker>,
 ): RecyclerView.Adapter<MainAdapter.MainViewHolder>(){
-    var languages = arrayOf("Java", "PHP", "Kotlin", "Javascript", "Python", "Swift")
+//    var languages = arrayOf("Java", "PHP", "Kotlin", "Javascript", "Python", "Swift")
 
     class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
@@ -34,6 +34,10 @@ class MainAdapter(
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val curWorker = workers[position]
+
+        val languages = Array(objects.size){
+            i -> objects[i].name
+        }
 
         holder.itemView.apply {
             tvWorkerName.text = curWorker.name
