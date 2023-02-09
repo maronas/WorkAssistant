@@ -31,8 +31,6 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var txt_selected_date : TextView
     private lateinit var workersRefs : DatabaseReference
     private lateinit var objectsRefs : DatabaseReference
-
-
     private lateinit var objectArrayList: ArrayList<Object>
     private lateinit var workerArrayList: ArrayList<Worker>
 
@@ -40,17 +38,16 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
 
         val btn_manage_objects = findViewById(R.id.btnManageObjects) as Button
         val btn_manage_workers = findViewById(R.id.btnManageWorkers) as Button
         val btn_select_date = findViewById(R.id.btnSelectDate) as Button
-        txt_selected_date = findViewById(R.id.tvSelectedDate)
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val myCalendar = Calendar.getInstance()
+        txt_selected_date = findViewById(R.id.tvSelectedDate)
         txt_selected_date.text = LocalDateTime.now().format(formatter)
 
-        val myCalendar = Calendar.getInstance()
         val datePicker = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
             myCalendar.set(Calendar.YEAR, year)
             myCalendar.set(Calendar.MONTH, month)
@@ -75,35 +72,30 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         mainAdapter = MainAdapter(mutableListOf(), mutableListOf())
         rvWorkers.adapter = mainAdapter
         rvWorkers.layoutManager = LinearLayoutManager(this)
-
         readData()
-
     }
 
     private fun readData(){
         workersRefs = FirebaseDatabase.getInstance().getReference("Workers")
         objectsRefs = FirebaseDatabase.getInstance().getReference("Objects")
-
         objectArrayList = arrayListOf<Object>()
         workerArrayList = arrayListOf<Worker>()
-        getObjectData()
+        getMainData()
     }
 
-    private fun getObjectData() {
+    private fun getMainData() {
         workersRefs.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-
-
                     for (workerSnapshot in snapshot.children) {
                         val worker = workerSnapshot.getValue(Worker::class.java)
                         workerArrayList.add(worker!!)
-
                     }
-                    rvWorkers.adapter = MainAdapter(objectArrayList, workerArrayList)
+                    val newObjects = objectArrayList.distinct()
+                    val newWorkers = workerArrayList.distinct()
+                    rvWorkers.adapter = MainAdapter(newObjects, newWorkers)
                 }
             }
-
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(baseContext,"Failed to load", Toast.LENGTH_SHORT).show()
             }
@@ -116,11 +108,11 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                         val newObject = objectSnapshot.getValue(Object::class.java)
                         objectArrayList.add(newObject!!)
                     }
-
-                    rvWorkers.adapter = MainAdapter(objectArrayList, workerArrayList)
+                    val newObjects = objectArrayList.distinct()
+                    val newWorkers = workerArrayList.distinct()
+                    rvWorkers.adapter = MainAdapter(newObjects, newWorkers)
                 }
             }
-
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(baseContext,"Failed to load", Toast.LENGTH_SHORT).show()
             }
@@ -139,6 +131,11 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     override fun onNothingSelected(arg0: AdapterView<*>) {
 
+    }
+
+    private fun refresh(){
+        workerArrayList.clear()
+        objectArrayList.clear()
     }
 
 }

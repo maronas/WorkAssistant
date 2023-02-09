@@ -26,34 +26,25 @@ class WorkersActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityWorkersBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         workerAdapter = WorkerAdapter(mutableListOf())
-
         rvWorkers.adapter = workerAdapter
         rvWorkers.layoutManager = LinearLayoutManager(this)
-
         readData()
-
         binding.btnAddWorker.setOnClickListener {
 
             if(binding.etWorkerLastname.text.isNotEmpty() && binding.etWorkerName.text.isNotEmpty() ){
                 val firstName = binding.etWorkerName.text.toString()
                 val lastName = binding.etWorkerLastname.text.toString()
                 val username = firstName + lastName
-
                 database = FirebaseDatabase.getInstance().getReference("Workers")
                 val worker = Worker(username, firstName, lastName)
-
                 database.child(username).setValue(worker).addOnSuccessListener {
                     binding.etWorkerName.text.clear()
                     binding.etWorkerLastname.text.clear()
-
                     Toast.makeText(this,"Successfully Saved", Toast.LENGTH_SHORT).show()
-
                 }.addOnFailureListener{
                     Toast.makeText(this,"Failed", Toast.LENGTH_SHORT).show()
                 }
-
                 refresh()
             }
         }
@@ -68,15 +59,12 @@ class WorkersActivity : AppCompatActivity() {
     }
 
     private fun readData(){
-
         database = FirebaseDatabase.getInstance().getReference("Workers")
-
         workerArrayList = arrayListOf<Worker>()
         getWorkerData()
     }
 
     private fun getWorkerData() {
-
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
@@ -87,7 +75,6 @@ class WorkersActivity : AppCompatActivity() {
                     rvWorkers.adapter = WorkerAdapter(workerArrayList)
                 }
             }
-
             override fun onCancelled(error: DatabaseError) {
             }
         })
@@ -96,18 +83,13 @@ class WorkersActivity : AppCompatActivity() {
     private fun deleteWorker(workerUsername: String){
         database = FirebaseDatabase.getInstance().getReference("Workers")
         database.child(workerUsername).removeValue().addOnSuccessListener {
-
             Toast.makeText(this,"Successfuly Deleted", Toast.LENGTH_SHORT).show()
-
         }.addOnFailureListener {
-
             Toast.makeText(this,"Failed", Toast.LENGTH_SHORT).show()
-
         }
     }
 
     private fun refresh(){
-        workerAdapter.notifyDataSetChanged()
         workerArrayList.clear()
     }
 

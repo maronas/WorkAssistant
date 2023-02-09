@@ -10,7 +10,6 @@ import kotlinx.android.synthetic.main.activity_objects.*
 
 class ObjectsActivity : AppCompatActivity() {
     private lateinit var objectAdapter: ObjectAdapter
-
     private lateinit var binding: ActivityObjectsBinding
     private lateinit var database : DatabaseReference
     private lateinit var objectArrayList: ArrayList<Object>
@@ -28,12 +27,10 @@ class ObjectsActivity : AppCompatActivity() {
         readData()
 
         binding.btnAddObject.setOnClickListener {
-
             if(binding.etObjectName.text.isNotEmpty()){
                 val objectName = binding.etObjectName.text.toString()
                 database = FirebaseDatabase.getInstance().getReference("Objects")
                 val objekt = Object(objectName)
-
                 database.child(objectName).setValue(objekt).addOnSuccessListener {
                     binding.etObjectName.text.clear()
 
@@ -41,7 +38,6 @@ class ObjectsActivity : AppCompatActivity() {
                 }.addOnFailureListener{
                     Toast.makeText(this,"Failed", Toast.LENGTH_SHORT).show()
                 }
-
                 refresh()
             }
             else{
@@ -51,8 +47,9 @@ class ObjectsActivity : AppCompatActivity() {
 
         binding.btnDeleteSelectedObjects.setOnClickListener {
             for(i in objectArrayList){
-                if(i.isChecked)
+                if(i.isChecked){
                     deleteObject(i.name.toString())
+                }
             }
             refresh()
         }
@@ -76,7 +73,6 @@ class ObjectsActivity : AppCompatActivity() {
                     rvObjects.adapter = ObjectAdapter(objectArrayList)
                 }
             }
-
             override fun onCancelled(error: DatabaseError) {
             }
         })
@@ -85,19 +81,13 @@ class ObjectsActivity : AppCompatActivity() {
     private fun deleteObject(objectName: String){
         database = FirebaseDatabase.getInstance().getReference("Objects")
         database.child(objectName).removeValue().addOnSuccessListener {
-
             Toast.makeText(this,"Successfuly Deleted", Toast.LENGTH_SHORT).show()
-
         }.addOnFailureListener {
-
             Toast.makeText(this,"Failed", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun refresh(){
-        finish()
-        overridePendingTransition(0, 0)
-        startActivity(getIntent())
-        overridePendingTransition(0, 0)
+        objectArrayList.clear()
     }
 }

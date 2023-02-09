@@ -14,14 +14,13 @@ import kotlinx.android.synthetic.main.object_view.view.*
 import kotlinx.android.synthetic.main.worker_view.view.*
 
 class MainAdapter(
-    private val objects: MutableList<Object>,
-    private val workers: MutableList<Worker>,
+    private val objects: List<Object>,
+    private val workers: List<Worker>,
 ): RecyclerView.Adapter<MainAdapter.MainViewHolder>(){
 //    var languages = arrayOf("Java", "PHP", "Kotlin", "Javascript", "Python", "Swift")
 
     class MainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
-
         return MainViewHolder(
             LayoutInflater.from(parent.context).inflate(
                 R.layout.day_worker_view,
@@ -29,12 +28,10 @@ class MainAdapter(
                 false
             )
         )
-
     }
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val curWorker = workers[position]
-
         val languages = Array(objects.size){
             i -> objects[i].name
         }
@@ -50,8 +47,6 @@ class MainAdapter(
                 spObjects.adapter = adapter
             }
         }
-
-
     }
 
     override fun getItemCount(): Int{

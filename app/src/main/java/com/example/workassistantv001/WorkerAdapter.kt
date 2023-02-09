@@ -25,18 +25,6 @@ class WorkerAdapter(
 
     }
 
-    fun addWorker(worker: Worker){
-        workers.add(worker)
-        notifyItemInserted(workers.size -1)
-    }
-
-    fun deleteWorker(){
-        workers.removeAll { worker ->
-            worker.isChecked
-        }
-        notifyDataSetChanged()
-    }
-
     private fun toggleStrikeThrough(tvWorkerName: TextView, isChecked: Boolean){
         if(isChecked){
             tvWorkerName.paintFlags = tvWorkerName.paintFlags or STRIKE_THRU_TEXT_FLAG
