@@ -48,8 +48,17 @@
         android:text="DATE"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/rvWorkers"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/logOutImg"
         app:layout_constraintStart_toEndOf="@+id/btnSelectDate"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/logOutImg"
+        android:layout_width="50dp"
+        android:layout_height="40dp"
+        android:src="@drawable/logout"
+        app:layout_constraintBottom_toTopOf="@+id/rvWorkers"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

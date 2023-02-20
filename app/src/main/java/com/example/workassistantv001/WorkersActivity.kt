@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.workassistantv001.databinding.ActivityMainBinding
 import com.example.workassistantv001.databinding.ActivityWorkersBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_workers.*
 import kotlinx.android.synthetic.main.activity_workers.view.*
@@ -20,11 +21,18 @@ class WorkersActivity : AppCompatActivity() {
     private lateinit var binding: ActivityWorkersBinding
     private lateinit var database : DatabaseReference
     private lateinit var workerArrayList: ArrayList<Worker>
+    private lateinit var userId: String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityWorkersBinding.inflate(layoutInflater)
+
+        val user = FirebaseAuth.getInstance().currentUser
+        user?.let {
+            userId = user.uid
+        }
+
         setContentView(binding.root)
         workerAdapter = WorkerAdapter(mutableListOf())
         rvWorkers.adapter = workerAdapter
@@ -35,10 +43,10 @@ class WorkersActivity : AppCompatActivity() {
             if(binding.etWorkerLastname.text.isNotEmpty() && binding.etWorkerName.text.isNotEmpty() ){
                 val firstName = binding.etWorkerName.text.toString()
                 val lastName = binding.etWorkerLastname.text.toString()
-                val username = firstName + lastName
-                database = FirebaseDatabase.getInstance().getReference("Workers")
+                val username = firstName + "_"+ lastName
+                database = FirebaseDatabase.getInstance().getReference(userId)
                 val worker = Worker(username, firstName, lastName)
-                database.child(username).setValue(worker).addOnSuccessListener {
+                database.child("Workers").child(username).setValue(worker).addOnSuccessListener {
                     binding.etWorkerName.text.clear()
                     binding.etWorkerLastname.text.clear()
                     Toast.makeText(this,"Successfully Saved", Toast.LENGTH_SHORT).show()
@@ -59,7 +67,7 @@ class WorkersActivity : AppCompatActivity() {
     }
 
     private fun readData(){
-        database = FirebaseDatabase.getInstance().getReference("Workers")
+        database = FirebaseDatabase.getInstance().getReference(userId).child("Workers")
         workerArrayList = arrayListOf<Worker>()
         getWorkerData()
     }
@@ -81,7 +89,7 @@ class WorkersActivity : AppCompatActivity() {
     }
 
     private fun deleteWorker(workerUsername: String){
-        database = FirebaseDatabase.getInstance().getReference("Workers")
+        database = FirebaseDatabase.getInstance().getReference(userId).child("Workers")
         database.child(workerUsername).removeValue().addOnSuccessListener {
             Toast.makeText(this,"Successfuly Deleted", Toast.LENGTH_SHORT).show()
         }.addOnFailureListener {

@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.worker_view.view.*
 
 class MainAdapter(
     private val objects: List<Object>,
-    private val workers: List<Worker>,
+    private val workers: List<Worker>
 ): RecyclerView.Adapter<MainAdapter.MainViewHolder>(){
 //    var languages = arrayOf("Java", "PHP", "Kotlin", "Javascript", "Python", "Swift")
 

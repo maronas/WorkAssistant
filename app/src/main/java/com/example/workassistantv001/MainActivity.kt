@@ -14,7 +14,14 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.workassistantv001.databinding.ActivityMainBinding
+import com.example.workassistantv001.databinding.ActivityObjectsBinding
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
+import com.google.firebase.ktx.Firebase
+import kotlinx.android.synthetic.main.activity_auth.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.rvWorkers
 import kotlinx.android.synthetic.main.activity_objects.*
@@ -25,6 +32,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.math.log
 
 class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var mainAdapter: MainAdapter
@@ -33,12 +41,21 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var objectsRefs : DatabaseReference
     private lateinit var objectArrayList: ArrayList<Object>
     private lateinit var workerArrayList: ArrayList<Worker>
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var userId: String
+    private lateinit var auth: FirebaseAuth
 
     @SuppressLint("MissingInflatedId")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        val user = FirebaseAuth.getInstance().currentUser
+        user?.let {
+            userId = user.uid
+        }
 
         val btn_manage_objects = findViewById(R.id.btnManageObjects) as Button
         val btn_manage_workers = findViewById(R.id.btnManageWorkers) as Button
@@ -65,6 +82,13 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             startActivity(intent)
         }
 
+        binding.logOutImg.setOnClickListener {
+            logout()
+            val intent = Intent(this, AuthActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
         btn_select_date.setOnClickListener {
             DatePickerDialog(this, datePicker,myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                 myCalendar.get(Calendar.DAY_OF_MONTH)).show()
@@ -76,8 +100,8 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
 
     private fun readData(){
-        workersRefs = FirebaseDatabase.getInstance().getReference("Workers")
-        objectsRefs = FirebaseDatabase.getInstance().getReference("Objects")
+        workersRefs = FirebaseDatabase.getInstance().getReference(userId).child("Workers")
+        objectsRefs = FirebaseDatabase.getInstance().getReference(userId).child("Objects")
         objectArrayList = arrayListOf<Object>()
         workerArrayList = arrayListOf<Worker>()
         getMainData()
@@ -133,9 +157,14 @@ class MainActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     }
 
-    private fun refresh(){
-        workerArrayList.clear()
-        objectArrayList.clear()
+    private fun logout() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(applicationContext.getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+
+        val googleSignInClient = GoogleSignIn.getClient(applicationContext, gso)
+        googleSignInClient.signOut()
     }
 
 }

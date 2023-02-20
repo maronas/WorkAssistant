@@ -8,12 +8,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1003826837412:android:4abc9b4ced4cd231a87331",
+        "mobilesdk_app_id": "1:1003826837412:android:94099bcfc4ef608ca87331",
         "android_client_info": {
           "package_name": "com.example.workassistantv001"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "1003826837412-t2p3pki5up2di1lps8mvf2getl32bes4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.workassistantv001",
+            "certificate_hash": "c98fc476f908b64080e8745b9613e79efda76f0b"
+          }
+        },
         {
           "client_id": "1003826837412-cf6qqkev5chr7uvuiiui020io18ovn93.apps.googleusercontent.com",
           "client_type": 3

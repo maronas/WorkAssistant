@@ -2,11 +2,10 @@
     <string name="app_name">Work Assistant V0.01</string>
     <string name="selected_item">Selected item:</string>
 
-
-    <string-array name="Objektai">
-        <item>Object 1</item>
-        <item>Object 2</item>
-        <item>Object 3</item>
-        <item>Object 4</item>
-    </string-array>
+    //Loginn Screen
+    <string name="create_an_account">Create an Account</string>
+    <string name="email_adress">Email Address</string>
+    <string name="password">Password</string>
+    <string name="continue_google">Continue with google</string>
+    <string name="already_have_an_account">Alread have an account?</string>
 </resources>
